@@ -38,26 +38,63 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Map<PermissionGroup, PermissionStatus> _permissions;
+  Directory _list;
+  int _listLength = 0;
+  List<String> _images = List<String>();
 
   @override
-  void initState() async {
+  void initState() {
     // TODO: implement initState
     super.initState();
+    startup();
+  }
+ void addImage(FileSystemEntity entity){
+    if (entity.path.contains('.jpg'))
+      _images.add(entity.path);
+  }
+  void startup() async
+  {
     _permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    _list = new Directory('storage/emulated/0/Download');
+    await _list.list(recursive: false, followLinks: false).forEach((FileSystemEntity e){
+      addImage(e);
+    });
+    print(await _list.list(recursive: false, followLinks: false).length);
+    
+    // _showFilesinDir(_list);
+    setState(() {_listLength = _images.length;});
   }
 
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Eye of " + widget.title),
       ),
-      body: Center(
-        child: Column(
-          
-        ),
+      body: GridView.count(
+        crossAxisCount: 2,
+        scrollDirection: Axis.vertical,
+        children: List.generate(_listLength, (index){
+          return Center(
+            child: Container(
+               decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 3.0),
+               ),
+               padding: const EdgeInsets.all(16.0),
+               child: /* Image.asset(_images[index]) */ Text(
+                 'Video $index',
+                 style: Theme.of(context).textTheme.headline,
+               ),
+            ),
+          );
+        }),
       ),
+      
       bottomNavigationBar: new BottomNavigationBar(
+        onTap: (int item) {
+          startup();
+        },
         items: [
           new BottomNavigationBarItem(
             icon: Icon(Icons.video_library),
@@ -73,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-void _showFilesinDir({Directory dir}) {
+void _showFilesinDir(dir) {
     dir.list(recursive: false, followLinks: false)
     .listen((FileSystemEntity entity) {
       print(entity.path);
