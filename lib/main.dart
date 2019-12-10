@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<PermissionGroup, PermissionStatus> _permissions;
   Directory _list;
   int _listLength = 0;
-  List<String> _images = List<String>();
+  List<File> _images = List<File>();
 
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
  void addImage(FileSystemEntity entity){
     if (entity.path.contains('.jpg'))
-      _images.add(entity.path);
+      _images.add(File(entity.path));
   }
   void startup() async
   {
@@ -82,10 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 border: Border.all(color: Colors.grey, width: 3.0),
                ),
                padding: const EdgeInsets.all(16.0),
-               child: /* Image.asset(_images[index]) */ Text(
+               child:  Image.file(_images[index]), /*  Text(
                  'Video $index',
                  style: Theme.of(context).textTheme.headline,
-               ),
+               ), */
             ),
           );
         }),
