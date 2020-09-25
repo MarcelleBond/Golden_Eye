@@ -1,6 +1,6 @@
-# horus
+# Golden Eye
 
-screen, internal sound and mic sound recording
+screen capturing with internal sound and mic recording
 
 ## Getting Started
 
